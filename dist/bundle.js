@@ -82,16 +82,75 @@ var _createClass = function () { function defineProperties(target, props) { for 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var Board = function () {
-  function Board(test) {
+  function Board() {
     _classCallCheck(this, Board);
 
-    this.test = test;
+    this.boardWrap = document.getElementById('boardWrap');
+    this.rowLength = 8;
+    this.isTileLight = true;
+    this.tiles = [];
+    this.x = 1;
+    this.y = 1;
   }
 
   _createClass(Board, [{
     key: 'render',
     value: function render() {
-      console.log('Board rendered');
+      for (var i = 1; i <= 64; i += 1) {
+        var tile = document.createElement('div');
+        this.x += 1;
+        if ((i - 1) % this.rowLength === 0) {
+          this.x = 1;
+          this.y = i === 1 ? 1 : this.y + 1;
+        } else {
+          this.isTileLight = !this.isTileLight;
+        }
+        tile.classList += 'tile';
+        if (this.isTileLight) {
+          tile.style.backgroundColor = 'white';
+        } else {
+          tile.style.backgroundColor = 'black';
+        }
+        tile.innerHTML = i;
+        this.boardWrap.appendChild(tile);
+        this.tiles.push({
+          domEl: tile,
+          x: this.x,
+          y: this.y
+        });
+      }
+    }
+  }, {
+    key: 'assignTilesPositions',
+    value: function assignTilesPositions() {
+      for (var i = 1; i <= 64; i += 1) {
+        this.x += 1;
+        if ((i - 1) % this.rowLength === 0) {
+          this.x = 1;
+          this.y = i === 1 ? 1 : this.y + 1;
+        } else {
+          this.isTileLight = !this.isTileLight;
+        }
+        var tile = document.createElement('div');
+        tile.classList += 'tile';
+        if (this.isTileLight) {
+          tile.style.backgroundColor = 'white';
+        } else {
+          tile.style.backgroundColor = 'black';
+        }
+        tile.innerHTML = i;
+        this.boardWrap.appendChild(tile);
+        this.tiles.push({
+          domEl: tile,
+          x: this.x,
+          y: this.y
+        });
+      }
+    }
+  }, {
+    key: 'getTiles',
+    value: function getTiles() {
+      return this.tiles;
     }
   }]);
 
