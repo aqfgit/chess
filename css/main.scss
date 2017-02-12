@@ -1,4 +1,4 @@
-.board-wrap {
+.board {
     position: relative;
     width: 800px;
     height: 800px;
@@ -9,15 +9,22 @@
     margin: 0 auto;
 }
 
-.tile {
+.board__tile {
     box-sizing: border-box;
     margin: 0;
     padding: 0;
     width: 100px;
     height: 100px;
-    background: pink;
     border: 1px solid black;
     color: deepskyblue;
+}
+
+.board__tile--dark {
+    background: black;
+}
+
+.board__tile--light {
+    background: white;
 }
 
 #foo {

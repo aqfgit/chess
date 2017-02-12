@@ -105,38 +105,11 @@ var Board = function () {
         } else {
           this.isTileLight = !this.isTileLight;
         }
-        tile.classList += 'tile';
+        tile.classList += 'board__tile';
         if (this.isTileLight) {
-          tile.style.backgroundColor = 'white';
+          tile.classList += ' board__tile--light';
         } else {
-          tile.style.backgroundColor = 'black';
-        }
-        tile.innerHTML = i;
-        this.boardWrap.appendChild(tile);
-        this.tiles.push({
-          domEl: tile,
-          x: this.x,
-          y: this.y
-        });
-      }
-    }
-  }, {
-    key: 'assignTilesPositions',
-    value: function assignTilesPositions() {
-      for (var i = 1; i <= 64; i += 1) {
-        this.x += 1;
-        if ((i - 1) % this.rowLength === 0) {
-          this.x = 1;
-          this.y = i === 1 ? 1 : this.y + 1;
-        } else {
-          this.isTileLight = !this.isTileLight;
-        }
-        var tile = document.createElement('div');
-        tile.classList += 'tile';
-        if (this.isTileLight) {
-          tile.style.backgroundColor = 'white';
-        } else {
-          tile.style.backgroundColor = 'black';
+          tile.classList += ' board__tile--dark';
         }
         tile.innerHTML = i;
         this.boardWrap.appendChild(tile);
