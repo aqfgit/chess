@@ -20,17 +20,20 @@
 }
 
 .board__tile--dark {
-    background: black;
+    background: #769656;
 }
 
 .board__tile--light {
-    background: white;
+    background: #eeeed2;
 }
 
-#foo {
+.board__chesspiece {
+    background-image: url('../static/img/pawn.png');
+    background-position-x: center;
+    background-size: cover;
     margin: 10px 0 0 25px;
     position: absolute;
     width: 50px;
     height: 80px;
-    background: red;
 }
+

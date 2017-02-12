@@ -63,28 +63,16 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 1);
+/******/ 	return __webpack_require__(__webpack_require__.s = 2);
 /******/ })
 /************************************************************************/
 /******/ ([
 /* 0 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var Board = function () {
-  function Board() {
-    _classCallCheck(this, Board);
-
+class Board {
+  constructor() {
     this.boardWrap = document.getElementById('boardWrap');
     this.rowLength = 8;
     this.isTileLight = true;
@@ -93,60 +81,180 @@ var Board = function () {
     this.y = 1;
   }
 
-  _createClass(Board, [{
-    key: 'render',
-    value: function render() {
-      for (var i = 1; i <= 64; i += 1) {
-        var tile = document.createElement('div');
-        this.x += 1;
-        if ((i - 1) % this.rowLength === 0) {
-          this.x = 1;
-          this.y = i === 1 ? 1 : this.y + 1;
-        } else {
-          this.isTileLight = !this.isTileLight;
-        }
-        tile.classList += 'board__tile';
-        if (this.isTileLight) {
-          tile.classList += ' board__tile--light';
-        } else {
-          tile.classList += ' board__tile--dark';
-        }
-        tile.innerHTML = i;
-        this.boardWrap.appendChild(tile);
-        this.tiles.push({
-          domEl: tile,
-          x: this.x,
-          y: this.y
-        });
+  render() {
+    for (let i = 1; i <= 64; i += 1) {
+      const tile = document.createElement('div');
+      this.x += 1;
+      if ((i - 1) % this.rowLength === 0) {
+        this.x = 1;
+        this.y = i === 1 ? 1 : this.y + 1;
+      } else {
+        this.isTileLight = !this.isTileLight;
       }
+      tile.classList += 'board__tile';
+      if (this.isTileLight) {
+        tile.classList += ' board__tile--light';
+      } else {
+        tile.classList += ' board__tile--dark';
+      }
+      tile.innerHTML = i;
+      this.boardWrap.appendChild(tile);
+      this.tiles.push({
+        domEl: tile,
+        x: this.x,
+        y: this.y,
+      });
     }
-  }, {
-    key: 'getTiles',
-    value: function getTiles() {
-      return this.tiles;
-    }
-  }]);
+  }
 
-  return Board;
-}();
+  getTiles() {
+    return this.tiles;
+  }
 
-exports.default = Board;
+}
+/* harmony export (immutable) */ __webpack_exports__["a"] = Board;
+
+
 
 /***/ }),
 /* 1 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
+class ChessPiece {
+  constructor(x, y, color) {
+    this.x = x;
+    this.y = y;
+    this.color = color;
+    this.distanceUnit = 100;
+    this.element = document.createElement('div');
+    this.image = 'image';
+  }
+
+  move(xDest, yDest) {
+    let toSubstractX = this.distanceUnit;
+    let toSubstractY = this.distanceUnit;
+    let toMultiplyX = xDest;
+    let toMultiplyY = yDest;
+    if (xDest === 1) {
+      toMultiplyX = 0;
+      toSubstractX = 0;
+    }
+    if (yDest === 1) {
+      toMultiplyY = 0;
+      toSubstractY = 0;
+    }
+    this.element.style.top = `${(this.distanceUnit * toMultiplyY) - toSubstractY}px`;
+    this.element.style.left = `${(this.distanceUnit * toMultiplyX) - toSubstractX}px`;
+    this.x = xDest;
+    this.y = yDest;
+  }
+
+  buildElement() {
+    this.element.classList += ' board__chesspiece';
+    this.element.style.backgroundImage = `url(./static/img/${this.image}.png)`;
+    document.getElementById('boardWrap').appendChild(this.element);
+    this.move(this.x, this.y);
+  }
+}
+/* unused harmony export ChessPiece */
 
 
-var _Board = __webpack_require__(0);
+class Pawn extends ChessPiece {
+  constructor(x, y, color) {
+    super(x, y, color);
+    this.image = 'pawn';
+    this.buildElement();
+  }
 
-var _Board2 = _interopRequireDefault(_Board);
+}
+/* harmony export (immutable) */ __webpack_exports__["f"] = Pawn;
 
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var board = new _Board2.default();
+class King extends ChessPiece {
+  constructor(x, y, color) {
+    super(x, y, color);
+    this.image = 'king';
+    this.buildElement();
+  }
+}
+/* harmony export (immutable) */ __webpack_exports__["e"] = King;
+
+
+class Quenn extends ChessPiece {
+  constructor(x, y, color) {
+    super(x, y, color);
+    this.image = 'queen';
+    this.buildElement();
+  }
+}
+/* harmony export (immutable) */ __webpack_exports__["d"] = Quenn;
+
+
+class Rook extends ChessPiece {
+  constructor(x, y, color) {
+    super(x, y, color);
+    this.image = 'rook';
+    this.buildElement();
+  }
+}
+/* harmony export (immutable) */ __webpack_exports__["a"] = Rook;
+
+
+class Bishop extends ChessPiece {
+  constructor(x, y, color) {
+    super(x, y, color);
+    this.image = 'bishop';
+    this.buildElement();
+  }
+}
+/* harmony export (immutable) */ __webpack_exports__["c"] = Bishop;
+
+
+class Knight extends ChessPiece {
+  constructor(x, y, color) {
+    super(x, y, color);
+    this.image = 'knight';
+    this.buildElement();
+  }
+}
+/* harmony export (immutable) */ __webpack_exports__["b"] = Knight;
+
+
+
+/***/ }),
+/* 2 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Board__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__ChessPieces__ = __webpack_require__(1);
+
+
+
+const board = new __WEBPACK_IMPORTED_MODULE_0__Board__["a" /* default */]();
 board.render();
+
+const rook1 = new __WEBPACK_IMPORTED_MODULE_1__ChessPieces__["a" /* Rook */](1, 1, 'white');
+const knight1 = new __WEBPACK_IMPORTED_MODULE_1__ChessPieces__["b" /* Knight */](2, 1, 'white');
+const bishop1 = new __WEBPACK_IMPORTED_MODULE_1__ChessPieces__["c" /* Bishop */](3, 1, 'white');
+const queen = new __WEBPACK_IMPORTED_MODULE_1__ChessPieces__["d" /* Quenn */](4, 1, 'white');
+const king = new __WEBPACK_IMPORTED_MODULE_1__ChessPieces__["e" /* King */](5, 1, 'white');
+const bishop2 = new __WEBPACK_IMPORTED_MODULE_1__ChessPieces__["c" /* Bishop */](6, 1, 'white');
+const knight2 = new __WEBPACK_IMPORTED_MODULE_1__ChessPieces__["b" /* Knight */](7, 1, 'white');
+const rook2 = new __WEBPACK_IMPORTED_MODULE_1__ChessPieces__["a" /* Rook */](8, 1, 'white');
+
+const pawn1 = new __WEBPACK_IMPORTED_MODULE_1__ChessPieces__["f" /* Pawn */](1, 2, 'white');
+const pawn2 = new __WEBPACK_IMPORTED_MODULE_1__ChessPieces__["f" /* Pawn */](2, 2, 'white');
+const pawn3 = new __WEBPACK_IMPORTED_MODULE_1__ChessPieces__["f" /* Pawn */](3, 2, 'white');
+const pawn4 = new __WEBPACK_IMPORTED_MODULE_1__ChessPieces__["f" /* Pawn */](4, 2, 'white');
+const pawn5 = new __WEBPACK_IMPORTED_MODULE_1__ChessPieces__["f" /* Pawn */](5, 2, 'white');
+const pawn6 = new __WEBPACK_IMPORTED_MODULE_1__ChessPieces__["f" /* Pawn */](6, 2, 'white');
+const pawn7 = new __WEBPACK_IMPORTED_MODULE_1__ChessPieces__["f" /* Pawn */](7, 2, 'white');
+const pawn8 = new __WEBPACK_IMPORTED_MODULE_1__ChessPieces__["f" /* Pawn */](8, 2, 'white');
+
+king.move(5,5)
 
 /***/ })
 /******/ ]);
