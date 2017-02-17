@@ -33,6 +33,10 @@ export class ChessPiece {
     document.getElementById('boardWrap').appendChild(this.element);
     this.move(this.x, this.y);
   }
+
+  getElement() {
+    return this.element;
+  }
 }
 
 export class Pawn extends ChessPiece {

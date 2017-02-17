@@ -5,29 +5,45 @@ import {
   Knight,
   Bishop,
   Quenn,
-  King
+  King,
 }
 from './ChessPieces';
 
-const board = new Board();
-board.render();
+class Game {
+  constructor() {
+    this.chessPieces = [];
+    this.board = new Board();
+  }
 
-const rook1 = new Rook(1, 1, 'white');
-const knight1 = new Knight(2, 1, 'white');
-const bishop1 = new Bishop(3, 1, 'white');
-const queen = new Quenn(4, 1, 'white');
-const king = new King(5, 1, 'white');
-const bishop2 = new Bishop(6, 1, 'white');
-const knight2 = new Knight(7, 1, 'white');
-const rook2 = new Rook(8, 1, 'white');
+  init() {
+    this.board.render();
+    this.chessPieces.push(
+      new Rook(1, 1, 'white'),
+      new Knight(2, 1, 'white'),
+      new Bishop(3, 1, 'white'),
+      new Quenn(4, 1, 'white'),
+      new King(5, 1, 'white'),
+      new Bishop(6, 1, 'white'),
+      new Knight(7, 1, 'white'),
+      new Rook(8, 1, 'white'),
+      new Rook(1, 8, 'black'),
+      new Knight(2, 8, 'black'),
+      new Bishop(3, 8, 'black'),
+      new Quenn(4, 8, 'black'),
+      new King(5, 8, 'black'),
+      new Bishop(6, 8, 'black'),
+      new Knight(7, 8, 'black'),
+      new Rook(8, 8, 'black')
+    );
 
-const pawn1 = new Pawn(1, 2, 'white');
-const pawn2 = new Pawn(2, 2, 'white');
-const pawn3 = new Pawn(3, 2, 'white');
-const pawn4 = new Pawn(4, 2, 'white');
-const pawn5 = new Pawn(5, 2, 'white');
-const pawn6 = new Pawn(6, 2, 'white');
-const pawn7 = new Pawn(7, 2, 'white');
-const pawn8 = new Pawn(8, 2, 'white');
+    for (let i = 1; i <= 8; i += 1) {
+      this.chessPieces.push(
+        new Pawn(i, 2, 'white'),
+        new Pawn(i, 7, 'black')
+      );
+    }
+  }
+}
 
-king.move(5,5)
+const game = new Game();
+game.init();

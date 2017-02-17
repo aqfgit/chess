@@ -156,6 +156,10 @@ class ChessPiece {
     document.getElementById('boardWrap').appendChild(this.element);
     this.move(this.x, this.y);
   }
+
+  getElement() {
+    return this.element;
+  }
 }
 /* unused harmony export ChessPiece */
 
@@ -233,28 +237,44 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
 
 
-const board = new __WEBPACK_IMPORTED_MODULE_0__Board__["a" /* default */]();
-board.render();
+class Game {
+  constructor() {
+    this.chessPieces = [];
+    this.board = new __WEBPACK_IMPORTED_MODULE_0__Board__["a" /* default */]();
+  }
 
-const rook1 = new __WEBPACK_IMPORTED_MODULE_1__ChessPieces__["a" /* Rook */](1, 1, 'white');
-const knight1 = new __WEBPACK_IMPORTED_MODULE_1__ChessPieces__["b" /* Knight */](2, 1, 'white');
-const bishop1 = new __WEBPACK_IMPORTED_MODULE_1__ChessPieces__["c" /* Bishop */](3, 1, 'white');
-const queen = new __WEBPACK_IMPORTED_MODULE_1__ChessPieces__["d" /* Quenn */](4, 1, 'white');
-const king = new __WEBPACK_IMPORTED_MODULE_1__ChessPieces__["e" /* King */](5, 1, 'white');
-const bishop2 = new __WEBPACK_IMPORTED_MODULE_1__ChessPieces__["c" /* Bishop */](6, 1, 'white');
-const knight2 = new __WEBPACK_IMPORTED_MODULE_1__ChessPieces__["b" /* Knight */](7, 1, 'white');
-const rook2 = new __WEBPACK_IMPORTED_MODULE_1__ChessPieces__["a" /* Rook */](8, 1, 'white');
+  init() {
+    this.board.render();
+    this.chessPieces.push(
+      new __WEBPACK_IMPORTED_MODULE_1__ChessPieces__["a" /* Rook */](1, 1, 'white'),
+      new __WEBPACK_IMPORTED_MODULE_1__ChessPieces__["b" /* Knight */](2, 1, 'white'),
+      new __WEBPACK_IMPORTED_MODULE_1__ChessPieces__["c" /* Bishop */](3, 1, 'white'),
+      new __WEBPACK_IMPORTED_MODULE_1__ChessPieces__["d" /* Quenn */](4, 1, 'white'),
+      new __WEBPACK_IMPORTED_MODULE_1__ChessPieces__["e" /* King */](5, 1, 'white'),
+      new __WEBPACK_IMPORTED_MODULE_1__ChessPieces__["c" /* Bishop */](6, 1, 'white'),
+      new __WEBPACK_IMPORTED_MODULE_1__ChessPieces__["b" /* Knight */](7, 1, 'white'),
+      new __WEBPACK_IMPORTED_MODULE_1__ChessPieces__["a" /* Rook */](8, 1, 'white'),
+      new __WEBPACK_IMPORTED_MODULE_1__ChessPieces__["a" /* Rook */](1, 8, 'black'),
+      new __WEBPACK_IMPORTED_MODULE_1__ChessPieces__["b" /* Knight */](2, 8, 'black'),
+      new __WEBPACK_IMPORTED_MODULE_1__ChessPieces__["c" /* Bishop */](3, 8, 'black'),
+      new __WEBPACK_IMPORTED_MODULE_1__ChessPieces__["d" /* Quenn */](4, 8, 'black'),
+      new __WEBPACK_IMPORTED_MODULE_1__ChessPieces__["e" /* King */](5, 8, 'black'),
+      new __WEBPACK_IMPORTED_MODULE_1__ChessPieces__["c" /* Bishop */](6, 8, 'black'),
+      new __WEBPACK_IMPORTED_MODULE_1__ChessPieces__["b" /* Knight */](7, 8, 'black'),
+      new __WEBPACK_IMPORTED_MODULE_1__ChessPieces__["a" /* Rook */](8, 8, 'black')
+    );
 
-const pawn1 = new __WEBPACK_IMPORTED_MODULE_1__ChessPieces__["f" /* Pawn */](1, 2, 'white');
-const pawn2 = new __WEBPACK_IMPORTED_MODULE_1__ChessPieces__["f" /* Pawn */](2, 2, 'white');
-const pawn3 = new __WEBPACK_IMPORTED_MODULE_1__ChessPieces__["f" /* Pawn */](3, 2, 'white');
-const pawn4 = new __WEBPACK_IMPORTED_MODULE_1__ChessPieces__["f" /* Pawn */](4, 2, 'white');
-const pawn5 = new __WEBPACK_IMPORTED_MODULE_1__ChessPieces__["f" /* Pawn */](5, 2, 'white');
-const pawn6 = new __WEBPACK_IMPORTED_MODULE_1__ChessPieces__["f" /* Pawn */](6, 2, 'white');
-const pawn7 = new __WEBPACK_IMPORTED_MODULE_1__ChessPieces__["f" /* Pawn */](7, 2, 'white');
-const pawn8 = new __WEBPACK_IMPORTED_MODULE_1__ChessPieces__["f" /* Pawn */](8, 2, 'white');
+    for (let i = 1; i <= 8; i += 1) {
+      this.chessPieces.push(
+        new __WEBPACK_IMPORTED_MODULE_1__ChessPieces__["f" /* Pawn */](i, 2, 'white'),
+        new __WEBPACK_IMPORTED_MODULE_1__ChessPieces__["f" /* Pawn */](i, 7, 'black')
+      );
+    }
+  }
+}
 
-king.move(5,5)
+const game = new Game();
+game.init();
 
 /***/ })
 /******/ ]);
