@@ -125,8 +125,10 @@ class ChessPiece {
   constructor(x, y, color) {
     this.x = x;
     this.y = y;
+    this.isSelected = false;
     this.color = color;
     this.distanceUnit = 100;
+    this.possibleMoves = [];
     this.element = document.createElement('div');
     this.image = 'image';
   }
@@ -155,10 +157,25 @@ class ChessPiece {
     this.element.style.backgroundImage = `url(./static/img/${this.image}.png)`;
     document.getElementById('boardWrap').appendChild(this.element);
     this.move(this.x, this.y);
+    this.initListeners();
   }
 
   getElement() {
     return this.element;
+  }
+
+  getPossibleMoves() {
+    return this.possibleMoves;
+  }
+
+  setPossibleMoves(posMoves) {
+    this.possibleMoves = posMoves;
+  }
+
+  initListeners() {
+    this.element.addEventListener('click', () => {
+      this.isSelected = true;
+    });
   }
 }
 /* unused harmony export ChessPiece */
@@ -221,6 +238,43 @@ class Knight extends ChessPiece {
     this.image = 'knight';
     this.buildElement();
   }
+
+  calculatePossibleMoves(tile) {
+    const moves = [{
+      x: tile.x + 2,
+      y: tile.y + 1,
+    },
+    {
+      x: tile.x + 2,
+      y: tile.y - 1,
+    },
+    {
+      x: tile.x + 1,
+      y: tile.y + 2,
+    },
+    {
+      x: tile.x + 1,
+      y: tile.y - 2,
+    },
+    {
+      x: tile.x - 1,
+      y: tile.y - 2,
+    },
+    {
+      x: tile.x - 2,
+      y: tile.y - 1,
+    },
+    {
+      x: tile.x - 1,
+      y: tile.y + 2,
+    },
+    {
+      x: tile.x - 2,
+      y: tile.y + 1,
+    },
+    ];
+    this.possibleMoves.push(...moves);
+  }
 }
 /* harmony export (immutable) */ __webpack_exports__["b"] = Knight;
 
@@ -241,6 +295,8 @@ class Game {
   constructor() {
     this.chessPieces = [];
     this.board = new __WEBPACK_IMPORTED_MODULE_0__Board__["a" /* default */]();
+    this.selectedChessPiece = null;
+    this.validMoves = [];
   }
 
   init() {
@@ -270,11 +326,60 @@ class Game {
         new __WEBPACK_IMPORTED_MODULE_1__ChessPieces__["f" /* Pawn */](i, 7, 'black')
       );
     }
+
+    this.handleControls();
   }
+
+  checkWhichChessPieceIsSelected() {
+    this.chessPieces.forEach((figure) => {
+      if (figure.isSelected) {
+        this.selectedChessPiece = figure;
+      }
+    });
+  }
+
+  handleControls() {
+    this.board.boardWrap.addEventListener('click', (event) => {
+      this.board.getTiles().forEach((tile) => {
+        if (tile.domEl === event.target) {
+          this.validMoves.forEach((validMove) => {
+            if ((validMove.x === tile.x) && (validMove.y === tile.y)) {
+              this.selectedChessPiece.move(tile.x, tile.y);
+              this.selectedChessPiece.isSelected = false;
+              this.selectedChessPiece.setPossibleMoves([]);
+              this.validMoves = [];
+            }
+          });
+        }
+      });
+    });
+  }
+
+  checkForValidMoves() {
+    if (this.selectedChessPiece !== null) {
+      this.board.getTiles().forEach((tile) => {
+        if ((tile.x === this.selectedChessPiece.x) && (tile.y === this.selectedChessPiece.y)) {
+          this.selectedChessPiece.calculatePossibleMoves(tile);
+          this.validMoves.push(...this.selectedChessPiece.getPossibleMoves(tile));
+        }
+      });
+    }
+  }
+
+  gameLoop() {
+    this.checkWhichChessPieceIsSelected();
+    this.checkForValidMoves();
+    window.requestAnimationFrame(this.gameLoop.bind(this));
+  }
+
 }
 
 const game = new Game();
 game.init();
+
+game.gameLoop();
+
+
 
 /***/ })
 /******/ ]);

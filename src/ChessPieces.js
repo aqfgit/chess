@@ -2,8 +2,10 @@ export class ChessPiece {
   constructor(x, y, color) {
     this.x = x;
     this.y = y;
+    this.isSelected = false;
     this.color = color;
     this.distanceUnit = 100;
+    this.possibleMoves = [];
     this.element = document.createElement('div');
     this.image = 'image';
   }
@@ -32,10 +34,25 @@ export class ChessPiece {
     this.element.style.backgroundImage = `url(./static/img/${this.image}.png)`;
     document.getElementById('boardWrap').appendChild(this.element);
     this.move(this.x, this.y);
+    this.initListeners();
   }
 
   getElement() {
     return this.element;
+  }
+
+  getPossibleMoves() {
+    return this.possibleMoves;
+  }
+
+  setPossibleMoves(posMoves) {
+    this.possibleMoves = posMoves;
+  }
+
+  initListeners() {
+    this.element.addEventListener('click', () => {
+      this.isSelected = true;
+    });
   }
 }
 
@@ -85,5 +102,42 @@ export class Knight extends ChessPiece {
     super(x, y, color);
     this.image = 'knight';
     this.buildElement();
+  }
+
+  calculatePossibleMoves(tile) {
+    const moves = [{
+      x: tile.x + 2,
+      y: tile.y + 1,
+    },
+    {
+      x: tile.x + 2,
+      y: tile.y - 1,
+    },
+    {
+      x: tile.x + 1,
+      y: tile.y + 2,
+    },
+    {
+      x: tile.x + 1,
+      y: tile.y - 2,
+    },
+    {
+      x: tile.x - 1,
+      y: tile.y - 2,
+    },
+    {
+      x: tile.x - 2,
+      y: tile.y - 1,
+    },
+    {
+      x: tile.x - 1,
+      y: tile.y + 2,
+    },
+    {
+      x: tile.x - 2,
+      y: tile.y + 1,
+    },
+    ];
+    this.possibleMoves.push(...moves);
   }
 }
