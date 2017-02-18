@@ -63,6 +63,30 @@ export class Pawn extends ChessPiece {
     this.buildElement();
   }
 
+  calculatePossibleMoves() {
+    switch (this.color) {
+      case 'white': {
+        const moves = [
+          {
+            x: this.x,
+            y: this.y - 1,
+          },
+        ];
+        this.possibleMoves.push(...moves);
+        break;
+      }
+      case 'black': {
+        const moves = [
+          {
+            x: this.x,
+            y: this.y + 1,
+          },
+        ];
+        this.possibleMoves.push(...moves);
+        break;
+      }
+    }
+  }
 }
 
 export class King extends ChessPiece {
@@ -104,38 +128,38 @@ export class Knight extends ChessPiece {
     this.buildElement();
   }
 
-  calculatePossibleMoves(tile) {
+  calculatePossibleMoves() {
     const moves = [{
-      x: tile.x + 2,
-      y: tile.y + 1,
+      x: this.x + 2,
+      y: this.y + 1,
     },
     {
-      x: tile.x + 2,
-      y: tile.y - 1,
+      x: this.x + 2,
+      y: this.y - 1,
     },
     {
-      x: tile.x + 1,
-      y: tile.y + 2,
+      x: this.x + 1,
+      y: this.y + 2,
     },
     {
-      x: tile.x + 1,
-      y: tile.y - 2,
+      x: this.x + 1,
+      y: this.y - 2,
     },
     {
-      x: tile.x - 1,
-      y: tile.y - 2,
+      x: this.x - 1,
+      y: this.y - 2,
     },
     {
-      x: tile.x - 2,
-      y: tile.y - 1,
+      x: this.x - 2,
+      y: this.y - 1,
     },
     {
-      x: tile.x - 1,
-      y: tile.y + 2,
+      x: this.x - 1,
+      y: this.y + 2,
     },
     {
-      x: tile.x - 2,
-      y: tile.y + 1,
+      x: this.x - 2,
+      y: this.y + 1,
     },
     ];
     this.possibleMoves.push(...moves);

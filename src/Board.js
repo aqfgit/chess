@@ -24,7 +24,6 @@ export default class Board {
       } else {
         tile.classList += ' board__tile--dark';
       }
-      tile.innerHTML = i;
       this.boardWrap.appendChild(tile);
       this.tiles.push({
         domEl: tile,

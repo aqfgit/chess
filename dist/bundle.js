@@ -97,7 +97,6 @@ class Board {
       } else {
         tile.classList += ' board__tile--dark';
       }
-      tile.innerHTML = i;
       this.boardWrap.appendChild(tile);
       this.tiles.push({
         domEl: tile,
@@ -188,6 +187,30 @@ class Pawn extends ChessPiece {
     this.buildElement();
   }
 
+  calculatePossibleMoves() {
+    switch (this.color) {
+      case 'white': {
+        const moves = [
+          {
+            x: this.x,
+            y: this.y - 1,
+          },
+        ];
+        this.possibleMoves.push(...moves);
+        break;
+      }
+      case 'black': {
+        const moves = [
+          {
+            x: this.x,
+            y: this.y + 1,
+          },
+        ];
+        this.possibleMoves.push(...moves);
+        break;
+      }
+    }
+  }
 }
 /* harmony export (immutable) */ __webpack_exports__["f"] = Pawn;
 
@@ -239,38 +262,38 @@ class Knight extends ChessPiece {
     this.buildElement();
   }
 
-  calculatePossibleMoves(tile) {
+  calculatePossibleMoves() {
     const moves = [{
-      x: tile.x + 2,
-      y: tile.y + 1,
+      x: this.x + 2,
+      y: this.y + 1,
     },
     {
-      x: tile.x + 2,
-      y: tile.y - 1,
+      x: this.x + 2,
+      y: this.y - 1,
     },
     {
-      x: tile.x + 1,
-      y: tile.y + 2,
+      x: this.x + 1,
+      y: this.y + 2,
     },
     {
-      x: tile.x + 1,
-      y: tile.y - 2,
+      x: this.x + 1,
+      y: this.y - 2,
     },
     {
-      x: tile.x - 1,
-      y: tile.y - 2,
+      x: this.x - 1,
+      y: this.y - 2,
     },
     {
-      x: tile.x - 2,
-      y: tile.y - 1,
+      x: this.x - 2,
+      y: this.y - 1,
     },
     {
-      x: tile.x - 1,
-      y: tile.y + 2,
+      x: this.x - 1,
+      y: this.y + 2,
     },
     {
-      x: tile.x - 2,
-      y: tile.y + 1,
+      x: this.x - 2,
+      y: this.y + 1,
     },
     ];
     this.possibleMoves.push(...moves);
@@ -297,33 +320,34 @@ class Game {
     this.board = new __WEBPACK_IMPORTED_MODULE_0__Board__["a" /* default */]();
     this.selectedChessPiece = null;
     this.validMoves = [];
+    this.invalidMoves = [];
   }
 
   init() {
     this.board.render();
     this.chessPieces.push(
-      new __WEBPACK_IMPORTED_MODULE_1__ChessPieces__["a" /* Rook */](1, 1, 'white'),
-      new __WEBPACK_IMPORTED_MODULE_1__ChessPieces__["b" /* Knight */](2, 1, 'white'),
-      new __WEBPACK_IMPORTED_MODULE_1__ChessPieces__["c" /* Bishop */](3, 1, 'white'),
-      new __WEBPACK_IMPORTED_MODULE_1__ChessPieces__["d" /* Quenn */](4, 1, 'white'),
-      new __WEBPACK_IMPORTED_MODULE_1__ChessPieces__["e" /* King */](5, 1, 'white'),
-      new __WEBPACK_IMPORTED_MODULE_1__ChessPieces__["c" /* Bishop */](6, 1, 'white'),
-      new __WEBPACK_IMPORTED_MODULE_1__ChessPieces__["b" /* Knight */](7, 1, 'white'),
-      new __WEBPACK_IMPORTED_MODULE_1__ChessPieces__["a" /* Rook */](8, 1, 'white'),
-      new __WEBPACK_IMPORTED_MODULE_1__ChessPieces__["a" /* Rook */](1, 8, 'black'),
-      new __WEBPACK_IMPORTED_MODULE_1__ChessPieces__["b" /* Knight */](2, 8, 'black'),
-      new __WEBPACK_IMPORTED_MODULE_1__ChessPieces__["c" /* Bishop */](3, 8, 'black'),
-      new __WEBPACK_IMPORTED_MODULE_1__ChessPieces__["d" /* Quenn */](4, 8, 'black'),
-      new __WEBPACK_IMPORTED_MODULE_1__ChessPieces__["e" /* King */](5, 8, 'black'),
-      new __WEBPACK_IMPORTED_MODULE_1__ChessPieces__["c" /* Bishop */](6, 8, 'black'),
-      new __WEBPACK_IMPORTED_MODULE_1__ChessPieces__["b" /* Knight */](7, 8, 'black'),
-      new __WEBPACK_IMPORTED_MODULE_1__ChessPieces__["a" /* Rook */](8, 8, 'black')
+      new __WEBPACK_IMPORTED_MODULE_1__ChessPieces__["a" /* Rook */](1, 1, 'black'),
+      new __WEBPACK_IMPORTED_MODULE_1__ChessPieces__["b" /* Knight */](2, 1, 'black'),
+      new __WEBPACK_IMPORTED_MODULE_1__ChessPieces__["c" /* Bishop */](3, 1, 'black'),
+      new __WEBPACK_IMPORTED_MODULE_1__ChessPieces__["d" /* Quenn */](4, 1, 'black'),
+      new __WEBPACK_IMPORTED_MODULE_1__ChessPieces__["e" /* King */](5, 1, 'black'),
+      new __WEBPACK_IMPORTED_MODULE_1__ChessPieces__["c" /* Bishop */](6, 1, 'black'),
+      new __WEBPACK_IMPORTED_MODULE_1__ChessPieces__["b" /* Knight */](7, 1, 'black'),
+      new __WEBPACK_IMPORTED_MODULE_1__ChessPieces__["a" /* Rook */](8, 1, 'black'),
+      new __WEBPACK_IMPORTED_MODULE_1__ChessPieces__["a" /* Rook */](1, 8, 'white'),
+      new __WEBPACK_IMPORTED_MODULE_1__ChessPieces__["b" /* Knight */](2, 8, 'white'),
+      new __WEBPACK_IMPORTED_MODULE_1__ChessPieces__["c" /* Bishop */](3, 8, 'white'),
+      new __WEBPACK_IMPORTED_MODULE_1__ChessPieces__["d" /* Quenn */](4, 8, 'white'),
+      new __WEBPACK_IMPORTED_MODULE_1__ChessPieces__["e" /* King */](5, 8, 'white'),
+      new __WEBPACK_IMPORTED_MODULE_1__ChessPieces__["c" /* Bishop */](6, 8, 'white'),
+      new __WEBPACK_IMPORTED_MODULE_1__ChessPieces__["b" /* Knight */](7, 8, 'white'),
+      new __WEBPACK_IMPORTED_MODULE_1__ChessPieces__["a" /* Rook */](8, 8, 'white')
     );
 
     for (let i = 1; i <= 8; i += 1) {
       this.chessPieces.push(
-        new __WEBPACK_IMPORTED_MODULE_1__ChessPieces__["f" /* Pawn */](i, 2, 'white'),
-        new __WEBPACK_IMPORTED_MODULE_1__ChessPieces__["f" /* Pawn */](i, 7, 'black')
+        new __WEBPACK_IMPORTED_MODULE_1__ChessPieces__["f" /* Pawn */](i, 2, 'black'),
+        new __WEBPACK_IMPORTED_MODULE_1__ChessPieces__["f" /* Pawn */](i, 7, 'white')
       );
     }
 
@@ -338,37 +362,64 @@ class Game {
     });
   }
 
+  clearValidMoves() {
+    if (this.selectedChessPiece !== null) {
+      this.selectedChessPiece.setPossibleMoves([]);
+      this.validMoves = [];
+    }
+  }
+
   handleControls() {
     this.board.boardWrap.addEventListener('click', (event) => {
+      this.clearValidMoves();
+      this.checkWhichChessPieceIsSelected();
+      this.checkForValidMoves();
+      this.checkForInvalidMoves();
       this.board.getTiles().forEach((tile) => {
-        if (tile.domEl === event.target) {
+        if (tile.domEl === event.target && this.selectedChessPiece.isSelected) {
           this.validMoves.forEach((validMove) => {
-            if ((validMove.x === tile.x) && (validMove.y === tile.y)) {
+            if (((validMove.x === tile.x) && (validMove.y === tile.y))) {
               this.selectedChessPiece.move(tile.x, tile.y);
               this.selectedChessPiece.isSelected = false;
-              this.selectedChessPiece.setPossibleMoves([]);
-              this.validMoves = [];
             }
           });
+          if (this.selectedChessPiece !== null) {
+            this.selectedChessPiece.isSelected = false;
+          }
+          this.clearValidMoves();
+          this.invalidMoves = [];
         }
       });
     });
   }
 
   checkForValidMoves() {
-    if (this.selectedChessPiece !== null) {
-      this.board.getTiles().forEach((tile) => {
-        if ((tile.x === this.selectedChessPiece.x) && (tile.y === this.selectedChessPiece.y)) {
-          this.selectedChessPiece.calculatePossibleMoves(tile);
-          this.validMoves.push(...this.selectedChessPiece.getPossibleMoves(tile));
+    this.selectedChessPiece.calculatePossibleMoves();
+    this.validMoves.push(...this.selectedChessPiece.getPossibleMoves());
+    this.validMoves.forEach((validMove, index, object) => {
+      this.invalidMoves.forEach((invalidMove) => {
+        if ((validMove.x === invalidMove.x) && (validMove.y === invalidMove.y)) {
+          object.splice(index, 1);
         }
       });
-    }
+    });
+    console.table(this.selectedChessPiece.getPossibleMoves());
+  }
+
+  checkForInvalidMoves() {
+    this.board.getTiles().forEach((tile) => {
+      this.chessPieces.forEach((figure) => {
+        if (figure !== this.selectedChessPiece && (figure.x === tile.x) && (figure.y === tile.y)) {
+          this.invalidMoves.push({
+            x: tile.x,
+            y: tile.y
+          });
+        }
+      });
+    });
   }
 
   gameLoop() {
-    this.checkWhichChessPieceIsSelected();
-    this.checkForValidMoves();
     window.requestAnimationFrame(this.gameLoop.bind(this));
   }
 
@@ -377,7 +428,7 @@ class Game {
 const game = new Game();
 game.init();
 
-game.gameLoop();
+// game.gameLoop();
 
 
 
