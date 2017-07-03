@@ -173,7 +173,7 @@ class ChessPiece {
 
   initListeners() {
     this.element.addEventListener('click', () => {
-      this.isSelected = true;
+      this.isSelected = true;    
     });
   }
 }
@@ -360,6 +360,7 @@ class Game {
         this.selectedChessPiece = figure;
       }
     });
+    console.log(this.selectedChessPiece)
   }
 
   clearValidMoves() {
@@ -374,11 +375,10 @@ class Game {
       this.clearValidMoves();
       this.checkWhichChessPieceIsSelected();
       this.checkForValidMoves();
-      this.checkForInvalidMoves();
       this.board.getTiles().forEach((tile) => {
         if (tile.domEl === event.target && this.selectedChessPiece.isSelected) {
           this.validMoves.forEach((validMove) => {
-            if (((validMove.x === tile.x) && (validMove.y === tile.y))) {
+            if ((validMove.x === tile.x) && (validMove.y === tile.y)) {
               this.selectedChessPiece.move(tile.x, tile.y);
               this.selectedChessPiece.isSelected = false;
             }
@@ -386,37 +386,23 @@ class Game {
           if (this.selectedChessPiece !== null) {
             this.selectedChessPiece.isSelected = false;
           }
-          this.clearValidMoves();
-          this.invalidMoves = [];
         }
       });
     });
+    this.clearValidMoves();
   }
 
   checkForValidMoves() {
     this.selectedChessPiece.calculatePossibleMoves();
     this.validMoves.push(...this.selectedChessPiece.getPossibleMoves());
-    this.validMoves.forEach((validMove, index, object) => {
-      this.invalidMoves.forEach((invalidMove) => {
-        if ((validMove.x === invalidMove.x) && (validMove.y === invalidMove.y)) {
+    this.validMoves.forEach((move, index, object) => {
+      this.chessPieces.forEach((figure) => {
+        if ((figure.x === move.x) && (figure.y === move.y)) {
           object.splice(index, 1);
         }
       });
     });
-    console.table(this.selectedChessPiece.getPossibleMoves());
-  }
-
-  checkForInvalidMoves() {
-    this.board.getTiles().forEach((tile) => {
-      this.chessPieces.forEach((figure) => {
-        if (figure !== this.selectedChessPiece && (figure.x === tile.x) && (figure.y === tile.y)) {
-          this.invalidMoves.push({
-            x: tile.x,
-            y: tile.y
-          });
-        }
-      });
-    });
+    console.table(this.validMoves)
   }
 
   gameLoop() {

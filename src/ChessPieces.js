@@ -51,7 +51,7 @@ export class ChessPiece {
 
   initListeners() {
     this.element.addEventListener('click', () => {
-      this.isSelected = true;
+      this.isSelected = true;    
     });
   }
 }
