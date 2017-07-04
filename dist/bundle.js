@@ -153,7 +153,7 @@ class ChessPiece {
 
   buildElement() {
     this.element.classList += ' board__chesspiece';
-    this.element.style.backgroundImage = `url(./static/img/${this.image}.png)`;
+    this.element.style.backgroundImage = `url(./static/img/${this.image}_${this.color}.png)`;
     document.getElementById('boardWrap').appendChild(this.element);
     this.move(this.x, this.y);
     this.initListeners();
@@ -221,6 +221,43 @@ class King extends ChessPiece {
     this.image = 'king';
     this.buildElement();
   }
+
+  calculatePossibleMoves() {
+    const moves = [{
+      x: this.x,
+      y: this.y + 1,
+    },
+    {
+      x: this.x,
+      y: this.y - 1,
+    },
+    {
+      x: this.x + 1,
+      y: this.y,
+    },
+    {
+      x: this.x - 1,
+      y: this.y,
+    },
+    {
+      x: this.x - 1,
+      y: this.y - 1,
+    },
+    {
+      x: this.x + 1,
+      y: this.y + 1,
+    },
+    {
+      x: this.x - 1,
+      y: this.y + 1,
+    },
+    {
+      x: this.x + 1,
+      y: this.y - 1,
+    },
+    ];
+    this.possibleMoves.push(...moves);
+  }
 }
 /* harmony export (immutable) */ __webpack_exports__["e"] = King;
 
@@ -230,6 +267,53 @@ class Quenn extends ChessPiece {
     super(x, y, color);
     this.image = 'queen';
     this.buildElement();
+  }
+
+  calculatePossibleMoves() {
+    const moves = [];
+    for (let i = 1; i <= 7; i += 1) {
+      moves.push({
+        x: this.x,
+        y: this.y + i,
+      });
+
+      moves.push({
+        x: this.x,
+        y: this.y - i,
+      });
+
+      moves.push({
+        x: this.x + i,
+        y: this.y,
+      });
+
+      moves.push({
+        x: this.x - i,
+        y: this.y,
+      });
+
+      moves.push({
+        x: this.x - i,
+        y: this.y - i,
+      });
+
+      moves.push({
+        x: this.x + i,
+        y: this.y + i,
+      });
+
+      moves.push({
+        x: this.x - i,
+        y: this.y + i,
+      });
+
+      moves.push({
+        x: this.x + i,
+        y: this.y - i,
+      });
+    }
+
+    this.possibleMoves.push(...moves);
   }
 }
 /* harmony export (immutable) */ __webpack_exports__["d"] = Quenn;
@@ -241,6 +325,33 @@ class Rook extends ChessPiece {
     this.image = 'rook';
     this.buildElement();
   }
+
+  calculatePossibleMoves() {
+    const moves = [];
+    for (let i = 1; i <= 7; i += 1) {
+      moves.push({
+        x: this.x,
+        y: this.y + i,
+      });
+
+      moves.push({
+        x: this.x,
+        y: this.y - i,
+      });
+
+      moves.push({
+        x: this.x + i,
+        y: this.y,
+      });
+
+      moves.push({
+        x: this.x - i,
+        y: this.y,
+      });
+    }
+
+    this.possibleMoves.push(...moves);
+  }
 }
 /* harmony export (immutable) */ __webpack_exports__["a"] = Rook;
 
@@ -250,6 +361,33 @@ class Bishop extends ChessPiece {
     super(x, y, color);
     this.image = 'bishop';
     this.buildElement();
+  }
+
+  calculatePossibleMoves() {
+    const moves = [];
+    for (let i = 1; i <= 7; i += 1) {
+      moves.push({
+        x: this.x - i,
+        y: this.y - i,
+      });
+
+      moves.push({
+        x: this.x + i,
+        y: this.y + i,
+      });
+
+      moves.push({
+        x: this.x - i,
+        y: this.y + i,
+      });
+
+      moves.push({
+        x: this.x + i,
+        y: this.y - i,
+      });
+    }
+
+    this.possibleMoves.push(...moves);
   }
 }
 /* harmony export (immutable) */ __webpack_exports__["c"] = Bishop;
