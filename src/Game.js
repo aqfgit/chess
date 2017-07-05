@@ -88,10 +88,10 @@ class Game {
   }
 
   checkForValidMoves() {
-    this.selectedChessPiece.calculatePossibleMoves();
+    this.selectedChessPiece.calculatePossibleMoves(this.chessPieces);
     this.validMoves.push(...this.selectedChessPiece.getPossibleMoves());
     const indexesToRemove = [];
-    this.validMoves.forEach((move, index, object) => {
+    this.validMoves.forEach((move, index) => {
       this.chessPieces.forEach((figure) => {
         if ((figure.x === move.x) && (figure.y === move.y)) {
           indexesToRemove.push(index);
