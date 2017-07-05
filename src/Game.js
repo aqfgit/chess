@@ -90,14 +90,19 @@ class Game {
   checkForValidMoves() {
     this.selectedChessPiece.calculatePossibleMoves();
     this.validMoves.push(...this.selectedChessPiece.getPossibleMoves());
+    const indexesToRemove = [];
     this.validMoves.forEach((move, index, object) => {
       this.chessPieces.forEach((figure) => {
         if ((figure.x === move.x) && (figure.y === move.y)) {
-          object.splice(index, 1);
+          indexesToRemove.push(index);
         }
       });
     });
-    console.table(this.validMoves)
+    let shift = 0;
+    indexesToRemove.forEach((i) => {
+      this.validMoves.splice(i - shift, 1);
+      shift += 1;
+    });
   }
 
   gameLoop() {
@@ -108,6 +113,4 @@ class Game {
 
 const game = new Game();
 game.init();
-
-// game.gameLoop();
 
