@@ -2,6 +2,7 @@ export class ChessPiece {
   constructor(x, y, color) {
     this.x = x;
     this.y = y;
+    this.numberOfMoves = 0;
     this.isSelected = false;
     this.color = color;
     this.distanceUnit = 100;
@@ -27,6 +28,7 @@ export class ChessPiece {
     this.element.style.left = `${(this.distanceUnit * toMultiplyX) - toSubstractX}px`;
     this.x = xDest;
     this.y = yDest;
+    this.numberOfMoves += 1;
   }
 
   buildElement() {
@@ -34,6 +36,7 @@ export class ChessPiece {
     this.element.style.backgroundImage = `url(./static/img/${this.image}_${this.color}.png)`;
     document.getElementById('boardWrap').appendChild(this.element);
     this.move(this.x, this.y);
+    this.numberOfMoves = 0;
     this.initListeners();
   }
 
@@ -51,8 +54,12 @@ export class ChessPiece {
 
   initListeners() {
     this.element.addEventListener('click', () => {
-      this.isSelected = true;    
-    });
+      this.isSelected = true;
+    }, true);
+  }
+
+  dispose() {
+    this.element.remove();
   }
 }
 
@@ -63,25 +70,105 @@ export class Pawn extends ChessPiece {
     this.buildElement();
   }
 
-  calculatePossibleMoves() {
+  calculatePossibleMoves(chessPiecies) {
+    const moves = [];
+    let isFieldInFrontEmpty = true;
+    let areTwoFieldsInFrontEmpty = true;
     switch (this.color) {
       case 'white': {
-        const moves = [
-          {
-            x: this.x,
-            y: this.y - 1,
-          },
-        ];
+        chessPiecies.forEach((figure) => {
+          if ((figure.x === this.x) && (figure.y === this.y - 1)) {
+            isFieldInFrontEmpty = false;
+          }
+
+          if ((figure.x === this.x + 1) && figure.y === this.y - 1) {
+            moves.push(
+              {
+                x: this.x + 1,
+                y: this.y - 1,
+              },
+            );
+          }
+
+          if ((figure.x === this.x - 1) && figure.y === this.y - 1) {
+            moves.push(
+              {
+                x: this.x - 1,
+                y: this.y - 1,
+              },
+            );
+          }
+
+          if (this.numberOfMoves > 0 || ((figure.x === this.x) && (figure.y === this.y - 2))) {
+            areTwoFieldsInFrontEmpty = false;
+          }
+        });
+        if (isFieldInFrontEmpty === true) {
+          moves.push(
+            {
+              x: this.x,
+              y: this.y - 1,
+            },
+          );
+        }
+
+        if (areTwoFieldsInFrontEmpty === true) {
+          moves.push(
+            {
+              x: this.x,
+              y: this.y - 2,
+            },
+          );
+        }
         this.possibleMoves.push(...moves);
         break;
       }
       case 'black': {
-        const moves = [
-          {
-            x: this.x,
-            y: this.y + 1,
-          },
-        ];
+        chessPiecies.forEach((figure) => {
+          if ((figure.x === this.x) && (figure.y === this.y + 1)) {
+            isFieldInFrontEmpty = false;
+          }
+
+          if ((figure.x === this.x + 1) && figure.y === this.y + 1) {
+            moves.push(
+              {
+                x: this.x + 1,
+                y: this.y + 1,
+              },
+            );
+          }
+
+          if ((figure.x === this.x - 1) && figure.y === this.y + 1) {
+            moves.push(
+              {
+                x: this.x - 1,
+                y: this.y + 1,
+              },
+            );
+          }
+
+          if ((this.numberOfMoves > 0) || ((figure.x === this.x) && (figure.y === this.y + 2))) {
+            areTwoFieldsInFrontEmpty = false;
+          }
+          this.possibleMoves.push(...moves);
+        });
+        if (isFieldInFrontEmpty === true) {
+          moves.push(
+            {
+              x: this.x,
+              y: this.y + 1,
+            },
+          );
+        }
+
+        if (areTwoFieldsInFrontEmpty === true) {
+          moves.push(
+            {
+              x: this.x,
+              y: this.y + 2,
+            },
+          );
+        }
         this.possibleMoves.push(...moves);
         break;
       }

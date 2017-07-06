@@ -124,6 +124,7 @@ class ChessPiece {
   constructor(x, y, color) {
     this.x = x;
     this.y = y;
+    this.numberOfMoves = 0;
     this.isSelected = false;
     this.color = color;
     this.distanceUnit = 100;
@@ -149,6 +150,7 @@ class ChessPiece {
     this.element.style.left = `${(this.distanceUnit * toMultiplyX) - toSubstractX}px`;
     this.x = xDest;
     this.y = yDest;
+    this.numberOfMoves += 1;
   }
 
   buildElement() {
@@ -156,6 +158,7 @@ class ChessPiece {
     this.element.style.backgroundImage = `url(./static/img/${this.image}_${this.color}.png)`;
     document.getElementById('boardWrap').appendChild(this.element);
     this.move(this.x, this.y);
+    this.numberOfMoves = 0;
     this.initListeners();
   }
 
@@ -173,8 +176,12 @@ class ChessPiece {
 
   initListeners() {
     this.element.addEventListener('click', () => {
-      this.isSelected = true;    
-    });
+      this.isSelected = true;
+    }, true);
+  }
+
+  dispose() {
+    this.element.remove();
   }
 }
 /* unused harmony export ChessPiece */
@@ -187,25 +194,105 @@ class Pawn extends ChessPiece {
     this.buildElement();
   }
 
-  calculatePossibleMoves() {
+  calculatePossibleMoves(chessPiecies) {
+    const moves = [];
+    let isFieldInFrontEmpty = true;
+    let areTwoFieldsInFrontEmpty = true;
     switch (this.color) {
       case 'white': {
-        const moves = [
-          {
-            x: this.x,
-            y: this.y - 1,
-          },
-        ];
+        chessPiecies.forEach((figure) => {
+          if ((figure.x === this.x) && (figure.y === this.y - 1)) {
+            isFieldInFrontEmpty = false;
+          }
+
+          if ((figure.x === this.x + 1) && figure.y === this.y - 1) {
+            moves.push(
+              {
+                x: this.x + 1,
+                y: this.y - 1,
+              },
+            );
+          }
+
+          if ((figure.x === this.x - 1) && figure.y === this.y - 1) {
+            moves.push(
+              {
+                x: this.x - 1,
+                y: this.y - 1,
+              },
+            );
+          }
+
+          if (this.numberOfMoves > 0 || ((figure.x === this.x) && (figure.y === this.y - 2))) {
+            areTwoFieldsInFrontEmpty = false;
+          }
+        });
+        if (isFieldInFrontEmpty === true) {
+          moves.push(
+            {
+              x: this.x,
+              y: this.y - 1,
+            },
+          );
+        }
+
+        if (areTwoFieldsInFrontEmpty === true) {
+          moves.push(
+            {
+              x: this.x,
+              y: this.y - 2,
+            },
+          );
+        }
         this.possibleMoves.push(...moves);
         break;
       }
       case 'black': {
-        const moves = [
-          {
-            x: this.x,
-            y: this.y + 1,
-          },
-        ];
+        chessPiecies.forEach((figure) => {
+          if ((figure.x === this.x) && (figure.y === this.y + 1)) {
+            isFieldInFrontEmpty = false;
+          }
+
+          if ((figure.x === this.x + 1) && figure.y === this.y + 1) {
+            moves.push(
+              {
+                x: this.x + 1,
+                y: this.y + 1,
+              },
+            );
+          }
+
+          if ((figure.x === this.x - 1) && figure.y === this.y + 1) {
+            moves.push(
+              {
+                x: this.x - 1,
+                y: this.y + 1,
+              },
+            );
+          }
+
+          if ((this.numberOfMoves > 0) || ((figure.x === this.x) && (figure.y === this.y + 2))) {
+            areTwoFieldsInFrontEmpty = false;
+          }
+          this.possibleMoves.push(...moves);
+        });
+        if (isFieldInFrontEmpty === true) {
+          moves.push(
+            {
+              x: this.x,
+              y: this.y + 1,
+            },
+          );
+        }
+
+        if (areTwoFieldsInFrontEmpty === true) {
+          moves.push(
+            {
+              x: this.x,
+              y: this.y + 2,
+            },
+          );
+        }
         this.possibleMoves.push(...moves);
         break;
       }
@@ -588,13 +675,13 @@ class Game {
       new __WEBPACK_IMPORTED_MODULE_1__ChessPieces__["e" /* King */](5, 8, 'white'),
       new __WEBPACK_IMPORTED_MODULE_1__ChessPieces__["c" /* Bishop */](6, 8, 'white'),
       new __WEBPACK_IMPORTED_MODULE_1__ChessPieces__["b" /* Knight */](7, 8, 'white'),
-      new __WEBPACK_IMPORTED_MODULE_1__ChessPieces__["a" /* Rook */](8, 8, 'white')
+      new __WEBPACK_IMPORTED_MODULE_1__ChessPieces__["a" /* Rook */](8, 8, 'white'),
     );
 
     for (let i = 1; i <= 8; i += 1) {
       this.chessPieces.push(
         new __WEBPACK_IMPORTED_MODULE_1__ChessPieces__["f" /* Pawn */](i, 2, 'black'),
-        new __WEBPACK_IMPORTED_MODULE_1__ChessPieces__["f" /* Pawn */](i, 7, 'white')
+        new __WEBPACK_IMPORTED_MODULE_1__ChessPieces__["f" /* Pawn */](i, 7, 'white'),
       );
     }
 
@@ -603,11 +690,11 @@ class Game {
 
   checkWhichChessPieceIsSelected() {
     this.chessPieces.forEach((figure) => {
-      if (figure.isSelected) {
+      if (figure.isSelected && (this.selectedChessPiece === null || this.selectedChessPiece.isSelected === false)) { // so you can't select other figure when one is already selected
         this.selectedChessPiece = figure;
       }
     });
-    console.log(this.selectedChessPiece)
+    // console.log(this.selectedChessPiece);
   }
 
   clearValidMoves() {
@@ -617,44 +704,81 @@ class Game {
     }
   }
 
+  beatTheFigure(moveToMake) {
+    this.chessPieces.forEach((figure, index, object) => {
+      if ((figure.x === moveToMake.x) && (figure.y === moveToMake.y) && (figure !== this.selectedChessPiece) && this.selectedChessPiece !== null) {
+        console.log(this.selectedChessPiece)
+        figure.dispose();
+        object.splice(index, 1);
+      }
+    });
+  }
+
+  disableOtherFigures() {
+    this.chessPieces.forEach((figure) => {
+      if (this.selectedChessPiece !== null) {
+        if ((this.selectedChessPiece.isSelected === true) && (figure !== this.selectedChessPiece)) {
+          figure.element.style.pointerEvents = 'none';
+        } else {
+          figure.element.style.pointerEvents = 'auto';
+        }
+      } else {
+        console.log('auto')
+        figure.element.style.pointerEvents = 'auto';
+        
+      }
+    });
+  }
+
   handleControls() {
     this.board.boardWrap.addEventListener('click', (event) => {
       this.clearValidMoves();
       this.checkWhichChessPieceIsSelected();
       this.checkForValidMoves();
+      this.disableOtherFigures();
+      if (this.selectedChessPiece === null) {
+        return;
+      }
       this.board.getTiles().forEach((tile) => {
         if (tile.domEl === event.target && this.selectedChessPiece.isSelected) {
+          console.log(this.selectedChessPiece)
           this.validMoves.forEach((validMove) => {
-            if ((validMove.x === tile.x) && (validMove.y === tile.y)) {
+            if ((validMove.x === tile.x) && (validMove.y === tile.y) && this.selectedChessPiece !== null) {
+              this.beatTheFigure(validMove);
               this.selectedChessPiece.move(tile.x, tile.y);
               this.selectedChessPiece.isSelected = false;
+              this.selectedChessPiece = null;
+              this.disableOtherFigures();
             }
           });
           if (this.selectedChessPiece !== null) {
             this.selectedChessPiece.isSelected = false;
+            this.disableOtherFigures();
           }
         }
       });
-    });
+    }, false);
     this.clearValidMoves();
   }
 
   checkForValidMoves() {
-    this.selectedChessPiece.calculatePossibleMoves(this.chessPieces);
-    this.validMoves.push(...this.selectedChessPiece.getPossibleMoves());
-    const indexesToRemove = [];
-    this.validMoves.forEach((move, index) => {
-      this.chessPieces.forEach((figure) => {
-        if ((figure.x === move.x) && (figure.y === move.y)) {
-          indexesToRemove.push(index);
-        }
+    if (this.selectedChessPiece !== null) {
+      this.selectedChessPiece.calculatePossibleMoves(this.chessPieces);
+      this.validMoves.push(...this.selectedChessPiece.getPossibleMoves());
+      const indexesToRemove = [];
+      this.validMoves.forEach((move, index) => {
+        this.chessPieces.forEach((figure) => {
+          if ((figure.x === move.x) && (figure.y === move.y) && (this.selectedChessPiece.color === figure.color)) {
+            indexesToRemove.push(index);
+          }
+        });
       });
-    });
-    let shift = 0;
-    indexesToRemove.forEach((i) => {
-      this.validMoves.splice(i - shift, 1);
-      shift += 1;
-    });
+      let shift = 0;
+      indexesToRemove.forEach((i) => {
+        this.validMoves.splice(i - shift, 1);
+        shift += 1;
+      });
+    }
   }
 
   gameLoop() {
@@ -665,7 +789,9 @@ class Game {
 
 const game = new Game();
 game.init();
-
+// window.setInterval(function() {
+//   console.log(game.selectedChessPiece.numberOfMoves)
+// }, 1000)
 
 
 /***/ })

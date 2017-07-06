@@ -36,13 +36,13 @@ class Game {
       new King(5, 8, 'white'),
       new Bishop(6, 8, 'white'),
       new Knight(7, 8, 'white'),
-      new Rook(8, 8, 'white')
+      new Rook(8, 8, 'white'),
     );
 
     for (let i = 1; i <= 8; i += 1) {
       this.chessPieces.push(
         new Pawn(i, 2, 'black'),
-        new Pawn(i, 7, 'white')
+        new Pawn(i, 7, 'white'),
       );
     }
 
@@ -51,11 +51,11 @@ class Game {
 
   checkWhichChessPieceIsSelected() {
     this.chessPieces.forEach((figure) => {
-      if (figure.isSelected) {
+      if (figure.isSelected && (this.selectedChessPiece === null || this.selectedChessPiece.isSelected === false)) { // so you can't select other figure when one is already selected
         this.selectedChessPiece = figure;
       }
     });
-    console.log(this.selectedChessPiece)
+    // console.log(this.selectedChessPiece);
   }
 
   clearValidMoves() {
@@ -65,44 +65,81 @@ class Game {
     }
   }
 
+  beatTheFigure(moveToMake) {
+    this.chessPieces.forEach((figure, index, object) => {
+      if ((figure.x === moveToMake.x) && (figure.y === moveToMake.y) && (figure !== this.selectedChessPiece) && this.selectedChessPiece !== null) {
+        console.log(this.selectedChessPiece)
+        figure.dispose();
+        object.splice(index, 1);
+      }
+    });
+  }
+
+  disableOtherFigures() {
+    this.chessPieces.forEach((figure) => {
+      if (this.selectedChessPiece !== null) {
+        if ((this.selectedChessPiece.isSelected === true) && (figure !== this.selectedChessPiece)) {
+          figure.element.style.pointerEvents = 'none';
+        } else {
+          figure.element.style.pointerEvents = 'auto';
+        }
+      } else {
+        console.log('auto')
+        figure.element.style.pointerEvents = 'auto';
+        
+      }
+    });
+  }
+
   handleControls() {
     this.board.boardWrap.addEventListener('click', (event) => {
       this.clearValidMoves();
       this.checkWhichChessPieceIsSelected();
       this.checkForValidMoves();
+      this.disableOtherFigures();
+      if (this.selectedChessPiece === null) {
+        return;
+      }
       this.board.getTiles().forEach((tile) => {
         if (tile.domEl === event.target && this.selectedChessPiece.isSelected) {
+          console.log(this.selectedChessPiece)
           this.validMoves.forEach((validMove) => {
-            if ((validMove.x === tile.x) && (validMove.y === tile.y)) {
+            if ((validMove.x === tile.x) && (validMove.y === tile.y) && this.selectedChessPiece !== null) {
+              this.beatTheFigure(validMove);
               this.selectedChessPiece.move(tile.x, tile.y);
               this.selectedChessPiece.isSelected = false;
+              this.selectedChessPiece = null;
+              this.disableOtherFigures();
             }
           });
           if (this.selectedChessPiece !== null) {
             this.selectedChessPiece.isSelected = false;
+            this.disableOtherFigures();
           }
         }
       });
-    });
+    }, false);
     this.clearValidMoves();
   }
 
   checkForValidMoves() {
-    this.selectedChessPiece.calculatePossibleMoves(this.chessPieces);
-    this.validMoves.push(...this.selectedChessPiece.getPossibleMoves());
-    const indexesToRemove = [];
-    this.validMoves.forEach((move, index) => {
-      this.chessPieces.forEach((figure) => {
-        if ((figure.x === move.x) && (figure.y === move.y)) {
-          indexesToRemove.push(index);
-        }
+    if (this.selectedChessPiece !== null) {
+      this.selectedChessPiece.calculatePossibleMoves(this.chessPieces);
+      this.validMoves.push(...this.selectedChessPiece.getPossibleMoves());
+      const indexesToRemove = [];
+      this.validMoves.forEach((move, index) => {
+        this.chessPieces.forEach((figure) => {
+          if ((figure.x === move.x) && (figure.y === move.y) && (this.selectedChessPiece.color === figure.color)) {
+            indexesToRemove.push(index);
+          }
+        });
       });
-    });
-    let shift = 0;
-    indexesToRemove.forEach((i) => {
-      this.validMoves.splice(i - shift, 1);
-      shift += 1;
-    });
+      let shift = 0;
+      indexesToRemove.forEach((i) => {
+        this.validMoves.splice(i - shift, 1);
+        shift += 1;
+      });
+    }
   }
 
   gameLoop() {
@@ -113,4 +150,6 @@ class Game {
 
 const game = new Game();
 game.init();
-
+// window.setInterval(function() {
+//   console.log(game.selectedChessPiece.numberOfMoves)
+// }, 1000)
