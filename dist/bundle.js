@@ -655,6 +655,7 @@ class Game {
     this.selectedChessPiece = null;
     this.validMoves = [];
     this.invalidMoves = [];
+    this.turn = 'white';
   }
 
   init() {
@@ -714,28 +715,44 @@ class Game {
     });
   }
 
-  disableOtherFigures() {
+  setProperTurn() {
+    if (this.turn === 'white') {
+      this.turn = 'black';
+    }
+    else if (this.turn === 'black') {
+      this.turn = 'white';
+    }
+
     this.chessPieces.forEach((figure) => {
-      if (this.selectedChessPiece !== null) {
-        if ((this.selectedChessPiece.isSelected === true) && (figure !== this.selectedChessPiece)) {
-          figure.element.style.pointerEvents = 'none';
-        } else {
-          figure.element.style.pointerEvents = 'auto';
-        }
-      } else {
-        console.log('auto')
+      if (figure.color === this.turn) {
         figure.element.style.pointerEvents = 'auto';
-        
+      } else {
+        figure.element.style.pointerEvents = 'none';
       }
     });
   }
+
+  // disableOtherFigures() {
+  //   this.chessPieces.forEach((figure) => {
+  //     if (this.selectedChessPiece !== null) {
+  //       if ((this.selectedChessPiece.isSelected === true) && (figure !== this.selectedChessPiece)) {
+  //         figure.element.style.pointerEvents = 'none';
+  //       } else {
+  //         figure.element.style.pointerEvents = 'auto';
+  //       }
+  //     } else {
+  //       console.log('auto')
+  //       figure.element.style.pointerEvents = 'auto';
+        
+  //     }
+  //   });
+  // }
 
   handleControls() {
     this.board.boardWrap.addEventListener('click', (event) => {
       this.clearValidMoves();
       this.checkWhichChessPieceIsSelected();
       this.checkForValidMoves();
-      this.disableOtherFigures();
       if (this.selectedChessPiece === null) {
         return;
       }
@@ -748,12 +765,11 @@ class Game {
               this.selectedChessPiece.move(tile.x, tile.y);
               this.selectedChessPiece.isSelected = false;
               this.selectedChessPiece = null;
-              this.disableOtherFigures();
+              this.setProperTurn();
             }
           });
           if (this.selectedChessPiece !== null) {
             this.selectedChessPiece.isSelected = false;
-            this.disableOtherFigures();
           }
         }
       });
@@ -789,9 +805,9 @@ class Game {
 
 const game = new Game();
 game.init();
-// window.setInterval(function() {
-//   console.log(game.selectedChessPiece.numberOfMoves)
-// }, 1000)
+window.setInterval(function() {
+  console.log(game.selectedChessPiece)
+}, 1000)
 
 
 /***/ })
